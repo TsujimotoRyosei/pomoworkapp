@@ -14,6 +14,8 @@
 		B580E1BC2B81B0A1000C76C5 /* pomoworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B580E1BB2B81B0A1000C76C5 /* pomoworkTests.swift */; };
 		B580E1C62B81B0A1000C76C5 /* pomoworkUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B580E1C52B81B0A1000C76C5 /* pomoworkUITests.swift */; };
 		B580E1C82B81B0A1000C76C5 /* pomoworkUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B580E1C72B81B0A1000C76C5 /* pomoworkUITestsLaunchTests.swift */; };
+		B580E20B2B83307C000C76C5 /* TodoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B580E20A2B83307C000C76C5 /* TodoView.swift */; };
+		B580E20D2B8338CD000C76C5 /* PomoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B580E20C2B8338CD000C76C5 /* PomoView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +46,8 @@
 		B580E1C12B81B0A1000C76C5 /* pomoworkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pomoworkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B580E1C52B81B0A1000C76C5 /* pomoworkUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pomoworkUITests.swift; sourceTree = "<group>"; };
 		B580E1C72B81B0A1000C76C5 /* pomoworkUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pomoworkUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		B580E20A2B83307C000C76C5 /* TodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoView.swift; sourceTree = "<group>"; };
+		B580E20C2B8338CD000C76C5 /* PomoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomoView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +100,8 @@
 			children = (
 				B580E1AA2B81B0A0000C76C5 /* pomoworkApp.swift */,
 				B580E1AC2B81B0A0000C76C5 /* ContentView.swift */,
+				B580E20C2B8338CD000C76C5 /* PomoView.swift */,
+				B580E20A2B83307C000C76C5 /* TodoView.swift */,
 				B580E1AE2B81B0A1000C76C5 /* Assets.xcassets */,
 				B580E1B02B81B0A1000C76C5 /* Preview Content */,
 			);
@@ -257,8 +263,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B580E20B2B83307C000C76C5 /* TodoView.swift in Sources */,
 				B580E1AD2B81B0A0000C76C5 /* ContentView.swift in Sources */,
 				B580E1AB2B81B0A0000C76C5 /* pomoworkApp.swift in Sources */,
+				B580E20D2B8338CD000C76C5 /* PomoView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -422,6 +430,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"pomowork/Preview Content\"";
+				DEVELOPMENT_TEAM = VD9LJGJT97;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -429,6 +438,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -450,6 +460,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"pomowork/Preview Content\"";
+				DEVELOPMENT_TEAM = VD9LJGJT97;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -457,6 +468,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

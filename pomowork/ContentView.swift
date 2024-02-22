@@ -1,24 +1,26 @@
-//
-//  ContentView.swift
-//  pomowork
-//
-//  Created by ryosei on 2024/02/18.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @State var selection = 1
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView(selection: $selection){
+            PomoView()
+                .tabItem {
+                    Label("ポモタイマー",systemImage: "timer.circle")
+                }
+                .tag(1)
+            TodoView()
+                .tabItem {
+                    Label("ToDoリスト",systemImage: "checkmark.circle")
+                }
+                .tag(2)
         }
-        .padding()
     }
 }
 
-#Preview {
-    ContentView()
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }
