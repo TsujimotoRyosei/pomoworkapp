@@ -11,11 +11,11 @@ enum AlertType {
 struct PomoView: View {
     let workDurations = ["10秒","1分", "10分", "15分", "20分", "25分", "30分", "35分", "40分", "45分", "50分", "55分", "60分"]
     let breakDurations = ["10秒","1分", "5分", "10分", "15分", "20分", "25分", "30分"]
-    let breakCounts = [1,2,3,4,5]
+    let breakCounts = ["1回","2回","3回","4回","5回"]
     
     @State private var selectedWorkDuration = "10秒"
     @State private var selectedBreakDuration = "10秒"
-    @State private var selectedBreakCount = 1
+    @State private var selectedBreakCount = "1回"
     
     @State private var remainingSeconds = 0
     @State private var isWorkTimerRunning = false
@@ -35,109 +35,148 @@ struct PomoView: View {
     @State private var totalbreak = 0
     @State private var totalTime = 0
     
+    @State private var selectworktime = false
+    @State private var onAppeared = false
+    @State private var selectbreaktime = false
+    @State private var selectbreakcount = false
+    @State private var strippedBreakCount = 0
+    
     
     var body: some View {
         NavigationView{
-            VStack {
-                Text("作業時間")
-                HStack {
-                    Picker("作業時間", selection: $selectedWorkDuration) {
-                        ForEach(workDurations, id: \.self) { duration in
-                            Text(duration).tag(duration)
+            ZStack {
+                VStack {
+                    Text("作業時間")
+                    HStack {
+                        Button(action: {
+                            selectworktime = true
+                        }) {
+                            Text(selectedWorkDuration)
+                                .foregroundColor(.blue)
                         }
-                    }
-                    .pickerStyle(.menu)
-                    .frame(width: 90)
-                    Text(isWorkTimerRunning ? "作業中" : selectedWorkDuration)
-                        .foregroundColor(.gray)
-                }
-                
-                Text("休憩時間")
-                HStack {
-                    Picker("休憩時間", selection: $selectedBreakDuration) {
-                        ForEach(breakDurations, id: \.self) { duration in
-                            Text(duration).tag(duration)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .frame(width: 90)
-                    Text(isBreakTimerRunning ? "休憩中" : selectedBreakDuration)
-                        .foregroundColor(.gray)
-                }
-                
-                Text("休憩回数")
-                HStack {
-                    Picker("休憩回数", selection: $selectedBreakCount) {
-                        ForEach(breakCounts, id: \.self) { count in
-                            Text("\(count) 回").tag(count)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .frame(width: 90)
-                    if breakcount_sw {
-                        Text("休憩回数: \(breakcount)")
-                            .foregroundColor(.gray)
-                    } else {
-                        Text("\(selectedBreakCount)回")
+                        .padding()
+                        Text(isWorkTimerRunning ? "作業中" : selectedWorkDuration)
                             .foregroundColor(.gray)
                     }
-                }
-                
-                Button(action: {
-                    if isWorkTimerRunning || isBreakTimerRunning {
-                        // タイマーが実行中の場合は何もしない
-                    } else if buttonLabel == "作業開始" || buttonLabel == "作業再開" {
-                        startWorkTimer(durationString: selectedWorkDuration)
-                    } else if buttonLabel == "休憩開始" {
-                        startBreakTimer(durationString: selectedBreakDuration)
+                    Text("休憩時間")
+                    HStack {
+                        Button(action: {
+                            selectbreaktime = true
+                        }){
+                            Text(selectedBreakDuration)
+                                .foregroundColor(.blue)
+                        }
+                        .padding()
+                        Text(isBreakTimerRunning ? "休憩中" : selectedBreakDuration)
+                            .foregroundColor(.gray)
                     }
-                }) {
-                    Text(buttonLabel)
+                    
+                    Text("休憩回数")
+                    HStack {
+                        Button(action: {
+                            selectbreakcount = true
+                        }){
+                            Text(selectedBreakCount)
+                                .foregroundColor(.blue)
+                        }
                         .padding()
-                        .background(Color.cyan)
-                        .foregroundColor(.white)
+                        if breakcount_sw {
+                            Text("休憩回数: \(breakcount)回")
+                                .foregroundColor(.gray)
+                        } else {
+                            Text("\(selectedBreakCount)")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    
+                    Button(action: {
+                        if isWorkTimerRunning || isBreakTimerRunning {
+                            // タイマーが実行中の場合は何もしない
+                        } else if buttonLabel == "作業開始" || buttonLabel == "作業再開" {
+                            startWorkTimer(durationString: selectedWorkDuration)
+                        } else if buttonLabel == "休憩開始" {
+                            startBreakTimer(durationString: selectedBreakDuration)
+                        }
+                    }) {
+                        Text(buttonLabel)
+                            .padding()
+                            .background(Color.cyan)
+                            .foregroundColor(.white)
+                    }
+                    .disabled(isWorkTimerRunning || isBreakTimerRunning)
+                    
+                    Button(action: {
+                        showingAlert = true
+                        alertType = .resetConfirmation
+                    }) {
+                        Text("リセット")
+                            .padding()
+                            .background(Color.cyan)
+                            .foregroundColor(.white)
+                    }
+                    
+                    if remainingSeconds > 0 {
+                        Text("残り時間: \(formattedTime(remainingSeconds))")
+                            .padding()
+                    }
+                    
                 }
-                .disabled(isWorkTimerRunning || isBreakTimerRunning)
                 
-                Button(action: {
-                    showingAlert = true
-                    alertType = .resetConfirmation
-                }) {
-                    Text("リセット")
-                        .padding()
-                        .background(Color.cyan)
-                        .foregroundColor(.white)
+                .sheet(isPresented: $selectworktime) {
+                    VStack {
+                        SelectPicker(selectIndex: $selectedWorkDuration,
+                                     isShowing: $selectworktime,
+                                     elements: workDurations)
+                        .presentationDetents([.height(250)])
+                        
+                    }
                 }
-                
-                if remainingSeconds > 0 {
-                    Text("残り時間: \(formattedTime(remainingSeconds))")
-                        .padding()
+                .sheet(isPresented: $selectbreaktime){
+                    VStack{
+                        SelectPicker(selectIndex: $selectedBreakDuration,
+                                     isShowing: $selectbreaktime,
+                                     elements: breakDurations)
+                        .presentationDetents([.height(250)])
+                    }
+                }
+                .sheet(isPresented: $selectbreakcount){
+                    VStack{
+                        SelectPicker(selectIndex: $selectedBreakCount,
+                                     isShowing: $selectbreakcount,
+                                     elements: breakCounts)
+                        .presentationDetents([.height(250)])
+                    }
                 }
             }
-            .alert(isPresented: $showingAlert) {
-                switch alertType {
-                case .workfinish:
-                    AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) {}
-                    return Alert(title: Text("作業終了"), message: Text("作業時間が終了しました"), dismissButton: .default(Text("OK")))
-                case .breakfinish:
-                    AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) {}
-                    return Alert(title: Text("休憩終了"), message: Text("休憩時間が終了しました"), dismissButton: .default(Text("OK")))
-                case .cyclefinish:
-                    AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) {}
-                    return Alert(title: Text("サイクルが終了しました"), message: Text("お疲れ様でした\n合計時間: \(formattedTotalTime(totalTime))\n作業時間: \(formattedTotalTime(totalwork))\n休憩時間: \(formattedTotalTime(totalbreak))"), dismissButton: .default(Text("OK")))
-                case .resetConfirmation:
-                    return Alert(
-                        title: Text("リセットしますか？"),
-                        primaryButton: .destructive(Text("Yes")) {
-                            resetTimer()
-                        },
-                        secondaryButton: .cancel(Text("No"))
-                    )
-                }
-            }
-            .padding()
-            .navigationTitle("ポモタイマー")
         }
+        .onAppear {
+            DispatchQueue.main.async {
+                onAppeared = true
+            }
+        }
+        .alert(isPresented: $showingAlert) {
+            switch alertType {
+            case .workfinish:
+                AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) {}
+                return Alert(title: Text("作業終了"), message: Text("作業時間が終了しました"), dismissButton: .default(Text("OK")))
+            case .breakfinish:
+                AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) {}
+                return Alert(title: Text("休憩終了"), message: Text("休憩時間が終了しました"), dismissButton: .default(Text("OK")))
+            case .cyclefinish:
+                AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) {}
+                return Alert(title: Text("サイクルが終了しました"), message: Text("お疲れ様でした\n合計時間: \(formattedTotalTime(totalTime))\n作業時間: \(formattedTotalTime(totalwork))\n休憩時間: \(formattedTotalTime(totalbreak))"), dismissButton: .default(Text("OK")))
+            case .resetConfirmation:
+                return Alert(
+                    title: Text("リセットしますか？"),
+                    primaryButton: .destructive(Text("Yes")) {
+                        resetTimer()
+                    },
+                    secondaryButton: .cancel(Text("No"))
+                )
+            }
+        }
+        .padding()
+        .navigationTitle("ポモタイマー")
     }
     
     private func startWorkTimer(durationString: String) {
@@ -166,8 +205,9 @@ struct PomoView: View {
                 alertType = .workfinish
                 buttonLabel = "休憩開始"
                 isWorkTimerRunning = false
+                strippedBreakCount = Int(selectedBreakCount.dropLast()) ?? 1
                 
-                if selectedBreakCount == breakcount {
+                if strippedBreakCount == breakcount {
                     showingAlert = true
                     alertType = .cyclefinish
                     resetTimer()
@@ -217,7 +257,7 @@ struct PomoView: View {
         breakcount_sw = false
         selectedWorkDuration = "10秒"
         selectedBreakDuration = "10秒"
-        selectedBreakCount = 1
+        selectedBreakCount = "1回"
         totalWorkDuration = 0
         totalBreakDuration = 0
     }
@@ -236,6 +276,48 @@ struct PomoView: View {
     }
 }
 
-#Preview {
-    PomoView()
+struct SelectPicker: View {
+    static let viewHeight: CGFloat = 200
+    @Binding var selectIndex: String
+    @Binding var isShowing: Bool
+    var elements: [String]
+    
+    var body: some View {
+        VStack {
+            VStack {
+                Rectangle().fill(Color(UIColor.systemGray4)).frame(height: 1)
+                
+                Spacer().frame(height: 10)
+                
+                Button(action: {
+                    self.isShowing = false
+                }) {
+                    HStack {
+                        Spacer()
+                        
+                        Text("完了")
+                            .font(.headline)
+                        
+                        Spacer().frame(width: 20)
+                    }
+                }
+                Spacer().frame(height: 10)
+            }
+            .background(Color(UIColor.systemGray6))
+            Picker(selection: $selectIndex, label: Text("")) {
+                ForEach(elements, id: \.self) { element in
+                    Text(element)
+                }
+            }
+            .pickerStyle(.wheel)
+            .background(Color(UIColor.systemGray4))
+            .labelsHidden()
+        }
+    }
+}
+
+struct PomoView_Previews: PreviewProvider {
+    static var previews: some View {
+        PomoView()
+    }
 }
