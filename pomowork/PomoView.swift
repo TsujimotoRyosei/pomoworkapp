@@ -148,6 +148,7 @@ struct PomoView: View {
                     }
                 }
             }
+            .navigationTitle("ポモタイマー")
         }
         .onAppear {
             DispatchQueue.main.async {
@@ -175,8 +176,6 @@ struct PomoView: View {
                 )
             }
         }
-        .padding()
-        .navigationTitle("ポモタイマー")
     }
     
     private func startWorkTimer(durationString: String) {
