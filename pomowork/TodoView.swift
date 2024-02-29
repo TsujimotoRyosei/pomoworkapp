@@ -1,9 +1,9 @@
 import SwiftUI
 
 enum AlertType2 {
-    case delete
+    case delete2
     case save
-    case error
+    case error2
 }
 
 enum AlertType3{
@@ -44,9 +44,10 @@ struct EditTodoView: View {
     
     @State private var editedTask: String
     @State private var editedDueDate: Date
-    @State private var isAlertPresented = false
+    @State private var isAlertPresented2 = false
     @State var alertType2: AlertType2 = .save
     @EnvironmentObject var todoStore: ToDoStore
+    @FocusState var isKeyboad2: Bool
     
     init(todo: Binding<ToDoItem>, isPresented: Binding<Bool>) {
         self._todo = todo
@@ -59,37 +60,46 @@ struct EditTodoView: View {
         NavigationView {
             VStack{
                 Form {
-                    TextField("ToDoを編集", text: $editedTask)
+                    TextField("ToDoの編集", text: $editedTask)
+                        .focused($isKeyboad2)
+                        .toolbar{
+                            ToolbarItemGroup(placement: .keyboard){
+                                Spacer()
+                                Button("完了", action:{
+                                    isKeyboad2 = false
+                                })
+                            }
+                        }
                     DatePicker("締切日", selection: $editedDueDate, displayedComponents: .date).environment(\.locale, Locale(identifier: "ja_JP"))
                 }
                 Button("削除", action: {
-                    isAlertPresented = true
-                    alertType2 = .delete
+                    isAlertPresented2 = true
+                    alertType2 = .delete2
                 })
                 .foregroundColor(.red)
                 .padding()
-                
                 Spacer()
             }
-            .navigationTitle("ToDoを編集")
+            .navigationTitle("ToDoの編集")
             .navigationBarItems(
                 leading: Button("キャンセル") {
                     isPresented = false
                 },
                 trailing: Button("保存") {
                     if editedTask.isEmpty{
-                        isAlertPresented = true
-                        alertType2 = .error
+                        isAlertPresented2 = true
+                        alertType2 = .error2
                     }else{
                         todo.task = editedTask
                         todo.dueDate = editedDueDate
-                        isAlertPresented = true
+                        isAlertPresented2 = true
+                        alertType2 = .save
                     }
                 }
             )
-            .alert(isPresented: $isAlertPresented) {
+            .alert(isPresented: $isAlertPresented2) {
                 switch alertType2 {
-                case .delete:
+                case .delete2:
                     return Alert(
                         title: Text("ToDoを削除しますか？"),
                         message: Text("ToDo: \(todo.task)\n締切日: \(formattedDate(date: todo.dueDate))"),
@@ -109,7 +119,7 @@ struct EditTodoView: View {
                             isPresented = false
                         }
                     )
-                case .error:
+                case .error2:
                     return Alert(
                         title: Text("エラー"),
                         message: Text("ToDoを入力してください。"),
@@ -138,14 +148,24 @@ struct TodoView: View {
     @State private var isAlertPresented = false
     @State private var selectedTodoForDeletion: ToDoItem?
     @State var alertType3: AlertType3 = .delete
+    @FocusState var isKeyboad: Bool
     
     var body: some View {
         NavigationView {
             VStack {
-                TextField("新しいToDoを追加", text: $todoText)
+                TextField("新しいToDoを入力してください", text: $todoText)
                     .textFieldStyle(.roundedBorder)
                     .padding()
                     .disabled(isEditingModalPresented)
+                    .focused($isKeyboad)
+                    .toolbar{
+                        ToolbarItemGroup(placement: .keyboard){
+                            Spacer()
+                            Button("完了", action: {
+                                isKeyboad = false
+                            })
+                        }
+                    }
                 
                 DatePicker("締切日", selection: $selectedDate, displayedComponents: .date).environment(\.locale, Locale(identifier: "ja_JP"))
                     .padding()
@@ -190,6 +210,7 @@ struct TodoView: View {
                                 if let todo = todoStore.todos.first(where: { $0.id == todo.id }) {
                                     selectedTodoForDeletion = todo
                                     isAlertPresented = true
+                                    alertType3 = .delete
                                 }
                             }
                             .tint(.red)
