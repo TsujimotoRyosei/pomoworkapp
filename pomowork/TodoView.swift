@@ -48,6 +48,7 @@ struct EditTodoView: View {
     @State var alertType2: AlertType2 = .save
     @EnvironmentObject var todoStore: ToDoStore
     @FocusState var isKeyboad2: Bool
+    @Environment(\.presentationMode) var presentation
     
     init(todo: Binding<ToDoItem>, isPresented: Binding<Bool>) {
         self._todo = todo
@@ -57,7 +58,6 @@ struct EditTodoView: View {
     }
     
     var body: some View {
-        NavigationView {
             VStack{
                 Form {
                     TextField("ToDoの編集", text: $editedTask)
@@ -82,9 +82,6 @@ struct EditTodoView: View {
             }
             .navigationTitle("ToDoの編集")
             .navigationBarItems(
-                leading: Button("キャンセル") {
-                    isPresented = false
-                },
                 trailing: Button("保存") {
                     if editedTask.isEmpty{
                         isAlertPresented2 = true
@@ -107,7 +104,7 @@ struct EditTodoView: View {
                         secondaryButton: .destructive(Text("削除"), action: {
                             if let index = todoStore.todos.firstIndex(where: { $0.id == todo.id }) {
                                 todoStore.todos.remove(at: index)
-                                isPresented = false
+                                self.presentation.wrappedValue.dismiss()
                             }
                         })
                     )
@@ -116,7 +113,7 @@ struct EditTodoView: View {
                         title: Text("ToDoを保存しました"),
                         message: Text("ToDo: \(editedTask)\n締切日: \(formattedDate(date: editedDueDate))"),
                         dismissButton: .default(Text("OK")){
-                            isPresented = false
+                            self.presentation.wrappedValue.dismiss()
                         }
                     )
                 case .error2:
@@ -127,7 +124,6 @@ struct EditTodoView: View {
                     )
                 }
             }
-        }
     }
     
     func formattedDate(date: Date) -> String {
@@ -149,6 +145,7 @@ struct TodoView: View {
     @State private var selectedTodoForDeletion: ToDoItem?
     @State var alertType3: AlertType3 = .delete
     @FocusState var isKeyboad: Bool
+    @State var isEditViewActive = false
     
     var body: some View {
         NavigationView {
@@ -188,22 +185,14 @@ struct TodoView: View {
                 
                 List {
                     ForEach(sortedTodos()) { todo in
-                        VStack(alignment: .leading) {
-                            Text("ToDo: \(todo.task)")
-                                .foregroundColor(determineTextColor(for: todo))
-                            Text("締切日: \(formattedDate(date: todo.dueDate))")
-                                .font(.footnote)
-                                .foregroundColor(determineTextColor(for: todo))
-                        }
-                        .swipeActions(edge: .leading) {
-                            Button("編集") {
-                                selectedItem = todo
-                                if let index = todoStore.todos.firstIndex(where: { $0.id == todo.id }) {
-                                    editingIndex = index
-                                }
-                                isEditingModalPresented = true
+                        NavigationLink(destination: EditTodoView(todo: $todoStore.todos[todoStore.todos.firstIndex(where: { $0.id == todo.id })!], isPresented: $isEditingModalPresented)) {
+                            VStack(alignment: .leading) {
+                                Text("ToDo: \(todo.task)")
+                                    .foregroundColor(determineTextColor(for: todo))
+                                Text("締切日: \(formattedDate(date: todo.dueDate))")
+                                    .font(.footnote)
+                                    .foregroundColor(determineTextColor(for: todo))
                             }
-                            .tint(.blue)
                         }
                         .swipeActions(edge: .trailing) {
                             Button("削除", role: .destructive) {
@@ -239,18 +228,11 @@ struct TodoView: View {
                         )
                     }
                 }
-                .sheet(isPresented: $isEditingModalPresented, content: {
-                    if let selectedItem = selectedItem,
-                       let index = todoStore.todos.firstIndex(where: { $0.id == selectedItem.id }) {
-                        EditTodoView(todo: $todoStore.todos[index], isPresented: $isEditingModalPresented)
-                            .environmentObject(todoStore)
-                    }
-                })
-                
                 Spacer()
             }
             .navigationBarTitle("ToDoリスト")
         }
+        .environmentObject(todoStore)
     }
     
     func sortedTodos() -> [ToDoItem] {
