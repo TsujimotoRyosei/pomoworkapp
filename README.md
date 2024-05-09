@@ -15,6 +15,9 @@
 - カウントダウン中は残り時間が表示されます。
 - リセットボタンを押すと、全てリセットされます。
 
+  <img src="https://github.com/TsujimotoRyosei/pomoworkapp/assets/146322875/3ce270c1-4240-4591-82a8-81bc5e3ed946" width="200">
+
+
 ## ToDoリスト画面
 - ToDoと締切日を入力し、追加ボタンを押すと、ToDoリストに追加されます。
 - ToDoを押すと、編集画面が表示され、編集と削除を選択することができます。
@@ -22,3 +25,6 @@
   - 削除を押すと、ToDoリストから削除されます。
 - 締切日を過ぎると赤文字になります。
 - 締切日が近い順に並んでいます。
+
+  <img src ="https://github.com/TsujimotoRyosei/pomoworkapp/assets/146322875/d056c093-8fa6-46af-bbc7-b2b98396469f" width="200">
+
