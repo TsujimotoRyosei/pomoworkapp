@@ -9,13 +9,16 @@ enum AlertType {
 }
 
 struct PomoView: View {
+    // 作業時間のリスト
     let workDurations = ["10秒","1分", "10分", "15分", "20分", "25分", "30分", "35分", "40分", "45分", "50分", "55分", "60分"]
+    // 休憩時間のリスト
     let breakDurations = ["10秒","1分", "5分", "10分", "15分", "20分", "25分", "30分"]
+    // 休憩回数のリスト
     let breakCounts = ["1回","2回","3回","4回","5回"]
     
-    @State private var selectedWorkDuration = "10秒"
-    @State private var selectedBreakDuration = "10秒"
-    @State private var selectedBreakCount = "1回"
+    @State private var selectedWorkDuration = "10秒" // 作業時間の初期値
+    @State private var selectedBreakDuration = "10秒" // 休憩時間の初期値
+    @State private var selectedBreakCount = "1回" // 休憩回数の初期値
     
     @State private var remainingSeconds = 0
     @State private var isWorkTimerRunning = false
@@ -55,6 +58,8 @@ struct PomoView: View {
                                 .foregroundColor(.blue)
                         }
                         .padding()
+                        // 作業時間中は作業中の文字を表示
+                        // 作業中以外は選択されている時間を表示
                         Text(isWorkTimerRunning ? "作業中" : selectedWorkDuration)
                             .foregroundColor(.gray)
                     }
@@ -67,6 +72,8 @@ struct PomoView: View {
                                 .foregroundColor(.blue)
                         }
                         .padding()
+                        // 休憩時間中は休憩中の文字を表示
+                        // 休憩中以外は選択されている時間を表示
                         Text(isBreakTimerRunning ? "休憩中" : selectedBreakDuration)
                             .foregroundColor(.gray)
                     }
@@ -80,9 +87,11 @@ struct PomoView: View {
                                 .foregroundColor(.blue)
                         }
                         .padding()
+                        // 使用中は休憩回数を表示
                         if breakcount_sw {
                             Text("休憩回数: \(breakcount)回")
                                 .foregroundColor(.gray)
+                        // 使用中以外は選択されている回数を表示
                         } else {
                             Text("\(selectedBreakCount)")
                                 .foregroundColor(.gray)
